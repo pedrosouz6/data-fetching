@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useFetch } from './hooks';
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface Repository {
+  full_name: string,
+  description: string
 }
 
-export default App;
+export default function App() {
+  
+  const { data, isFetching } = useFetch<Repository[]>('https://api.github.com/users/pedrosouz6/repos');
+  
+  return (
+    <ul>
+      { isFetching && <p>carregando...</p> }
+      
+      { 
+        data &&
+        data.map((item, key) => (
+          <div>
+            <li key={key}>{ item.full_name }</li>
+            <strong>{ item.description }</strong> 
+            <br/>
+            <br/>
+          </div>
+        ))
+      }
+    </ul>
+  );
+}
